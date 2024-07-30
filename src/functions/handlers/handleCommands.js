@@ -2,6 +2,8 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 
+const testMode = true; // change to false to register commands globally
+
 module.exports = (client) => {
     client.handleCommands = async () => {
         const commandsFolders = fs.readdirSync(`./src/commands`);
@@ -16,12 +18,12 @@ module.exports = (client) => {
                 const command = require(`../../commands/${folder}/${file}`);
                 commands.set(command.data.name, command);
 
-                if (folder === 'tools') {
+                if (folder === 'tools' || testMode) {
                     testCommandArray.push(command.data.toJSON());
-                    console.log(`Test command loaded: ${command.data.name}`);
+                    // console.log(`Test command loaded: ${command.data.name}`);
                 } else {
                     commandArray.push(command.data.toJSON());
-                    console.log(`Command loaded: ${command.data.name}`);
+                    // console.log(`Command loaded: ${command.data.name}`);
                 }
             }
         }

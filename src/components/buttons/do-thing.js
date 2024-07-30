@@ -4,7 +4,7 @@ module.exports = {
     },
     async execute(interaction, client) {
         await interaction.reply({
-            content: `Click Me!`
+            content: `Clicked by ${interaction.user.globalName}!`
         });
     }
 }
