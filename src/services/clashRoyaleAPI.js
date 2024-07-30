@@ -17,6 +17,11 @@ const getRiverRaceLog = async (clanTag) => {
     return riverRaceLog.data;
 };
 
+const getCurrentRiverRace = async (clanTag) => {
+    const riverRace = await getRequest(`/clans/%23${clanTag}/currentriverrace`);
+    return riverRace.data;
+};
+
 const getPlayer = async (playerTag) => {
     const player = await getRequest(`/players/%23${playerTag}`);
     return player.data;
@@ -30,6 +35,7 @@ const getClan = async (clanTag) => {
 
 module.exports = {
     getRiverRaceLog,
+    getCurrentRiverRace,
     getPlayer,
     getClan,
 };

@@ -1,6 +1,6 @@
-const { SlashCommandBuilder, bold, heading, italic } = require('discord.js');
-const { table } = require('table');
-const { getRiverRaceLog } = require('../../services/clashRoyaleAPI');
+const { SlashCommandBuilder, bold, heading } = require('discord.js');
+const { getCurrentRiverRace } = require('../../services/clashRoyaleAPI');
+const { currentRiverRaceTable } = require('../../utils/clashRoyaleTables');
 
 
 module.exports = {
@@ -17,46 +17,21 @@ module.exports = {
         const clanTagOption = interaction.options.getString('clantag');
         const clanTag = clanTagOption ?? 'G88J9CVP'; // Glacier 2 clan tag
 
-        const war = await getRiverRaceLog(clanTag);
-        const participants = war.clan.participants.reverse();
-        // const latestParticipants = latestStandings[1].clan.participants;
+        const war = await getCurrentRiverRace(clanTag);
+        const asciiTable = await currentRiverRaceTable(war);
 
-        // console.log(JSON.stringify(war, null, 2));
-        console.log(war);
-        console.log(participants);
-        // console.log(latestParticipants);
+        const periodType = war.periodType;
+        let dayType;
 
-        const dataTable = [
-            ['Player', 'Medals', 'Decks', 'Medals/Deck', 'Boat Attacks'],
-        ];
-
-        let name = "";
-        let fame = "";
-        let decksUsedToday = "";
-        let famePerDeck = "";
-        let boatAttacks = "";
-
-        for (const player of participants) {
-            name = player.name;
-            fame = player.fame.toString();
-            decksUsedToday = (4 - player.decksUsedToday).toString();
-            famePerDeck = "N/A";
-            if (player.decksUsed) {
-                famePerDeck = Math.round(player.fame / player.decksUsed).toString();
-            }
-            boatAttacks = player.boatAttacks.toString();
-
-            dataTable.push([name, fame, decksUsedToday, famePerDeck, boatAttacks]);
+        if (periodType.toLowerCase() == "training") {
+            dayType = "Training Day";
+        } else if (periodType.toLowerCase() == "war_day") {
+            dayType = "Battle Day";
+        } else if (periodType.toLowerCase() == "colosseum") {
+            dayType = "Colosseum";
         }
-
-        const config = {
-            drawHorizontalLine: (lineIndex, rowCount) => {
-                return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
-            },
-        };
-
-        // console.log(table(dataTable, config));
-        const message = `${heading("Current War Summary")}\n${bold(war.clan.name)} | ${bold(italic("War Day"))}\`\`\`${table(dataTable, config)}\`\`\``;
+        
+        const message = `${heading("Current War Summary")}\n${bold(war.clan.name)} | ${bold(dayType)}\`\`\`${asciiTable}\`\`\``;
 
         await interaction.reply({
             content: message,
