@@ -12,6 +12,11 @@ const challengeSchema = new Schema({
         enum: ["pending", "declined", "ongoing", "completed"],
         required: true,
     },
+    winner: {
+        type: String,
+        enum: ["1", "2", "tie"],
+        required: false,
+    },
 });
 
 module.exports = model("Challenge", challengeSchema, "challenge");

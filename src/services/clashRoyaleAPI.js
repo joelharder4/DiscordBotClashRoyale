@@ -14,22 +14,38 @@ const getRequest = async (endpoint) => {
 
 const getRiverRaceLog = async (clanTag) => {
     const riverRaceLog = await getRequest(`/clans/%23${clanTag}/riverracelog`);
-    return riverRaceLog.data;
+    
+    if (riverRaceLog.status === 200) {
+        return riverRaceLog.data;
+    }
+    return undefined;
 };
 
 const getCurrentRiverRace = async (clanTag) => {
     const riverRace = await getRequest(`/clans/%23${clanTag}/currentriverrace`);
-    return riverRace.data;
+    
+    if (riverRace.status === 200) {
+        return riverRace.data;
+    }
+    return undefined;
 };
 
 const getPlayer = async (playerTag) => {
     const player = await getRequest(`/players/%23${playerTag}`);
-    return player.data;
+
+    if (player.status === 200) {
+        return player.data;
+    }
+    return undefined;
 };
 
 const getClan = async (clanTag) => {
     const clan = await getRequest(`/clans/%23${clanTag}`);
-    return clan.data;
+    
+    if (clan.status === 200) {
+        return clan.data;
+    }
+    return undefined;
 };
 
 

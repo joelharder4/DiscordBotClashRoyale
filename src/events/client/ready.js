@@ -1,6 +1,5 @@
 const fs = require("fs");
 const schedule = require('node-schedule');
-const EnabledJobs = require('../../schemas/enabledJobs');
 
 module.exports = {
     name: 'ready',
@@ -14,39 +13,35 @@ module.exports = {
             const jobFiles = fs
                 .readdirSync(`./src/jobs/${folder}`)
                 .filter((file) => file.endsWith('.js'));
-            
-            switch (folder) {
-                case "clan":
-                    for (const file of jobFiles) {
-                        const job = require(`../../jobs/${folder}/${file}`);
 
-                        schedule.scheduleJob(job.schedule, async () => {
+            // set up the schedule for each job
+            for (const file of jobFiles) {
+                const job = require(`../../jobs/${folder}/${file}`);
 
-                            try {
-                                // Retrieve all documents
-                                const enabledJobsArray = await EnabledJobs.find({});
-
-                                // Loop through all guildIds
-                                enabledJobsArray.forEach(jobs => {
-
-                                    if (jobs.jobNames.includes(job.name)) {
-                                        job.execute(client, jobs.guildId);
-                                    } else {
-                                        console.log(`Job '${job.name}' is disabled`);
-                                    }
-
-                                });
-                            } catch (err) {
-                                console.error('Error retrieving documents:', err);
-                            }
-                        });
+                schedule.scheduleJob(job.schedule, async () => {
+                    try {
+                        job.execute(client);
+                    } catch (err) {
+                        console.error(`Error excuting job ${job.name}: ${err}`);
                     }
-                    break;
-
-                default:
-                    console.log(`No event handler for folder '${folder}'`);
-                    break;
+                });
             }
+            
+            // switch (folder) {
+            //     case "clan":
+            //         for (const file of jobFiles) {
+            //             const job = require(`../../jobs/${folder}/${file}`);
+
+            //             schedule.scheduleJob(job.schedule, async () => {
+            //                 job.execute(client);
+            //             });
+            //         }
+            //         break;
+
+            //     default:
+            //         console.log(`No event handler for folder '${folder}'`);
+            //         break;
+            // }
         }
     }
 }

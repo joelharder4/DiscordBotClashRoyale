@@ -1,7 +1,7 @@
-const { SlashCommandBuilder, italic, heading } = require('discord.js');
-const { table } = require('table');
+const { SlashCommandBuilder, heading, bold } = require('discord.js');
 const { getClan } = require('../../services/clashRoyaleAPI');
-
+const { clanMembersTable } = require('../../utils/clashRoyaleTables');
+const Clan = require('../../schemas/clanTag');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,58 +14,43 @@ module.exports = {
 
     async execute(interaction, client) {
 
+        const guildClanProfile = await Clan.findOne({ guildId: interaction.guild.id });
         const clanTagOption = interaction.options.getString('clantag');
-        const clanTag = clanTagOption ?? 'G88J9CVP'; // Glacier 2 clan tag
 
-        const clan = await getClan(clanTag);
-        const memberList = clan.memberList;
-
-        console.log(clan);
-        // console.log(latestParticipants);
-
-        const dataTable = [
-            ['Member', 'Trophies', 'Role', 'Last Online'],
-        ];
-
-        let name = "";
-        let role = "";
-        let trophies = "";
-        let lastOnline = "";
-
-        for (const member of memberList) {
-            name = member.name;
-            trophies = member.trophies.toString();
-            role = member.role;
-
-            const date = new Date(
-                member.lastSeen.replace(
-                    /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2}\.\d{3}Z)$/,
-                    '$1-$2-$3T$4:$5:$6'
-                )
-            );
-            lastOnline = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-
-            dataTable.push([name, trophies, role, lastOnline]);
+        if (!guildClanProfile && !clanTagOption) {
+            await interaction.reply({
+                content: `You must either provide a clan tag in the command, or set a default clan tag for this server using \`/setserverclan\`!`,
+                ephemeral: true,
+            });
+            return;
         }
 
-        const config = {
-            drawHorizontalLine: (lineIndex, rowCount) => {
-                return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
-            },
-        };
+        // 'G88J9CVP' is Glacier 2 clan tag
+        const clanTag = clanTagOption ?? guildClanProfile.clanTag;
+
+        const clan = await getClan(clanTag);
+
+        if (!clan) {
+            await interaction.reply({
+                content: `Could not find a clan with the tag \`#${clanTag}\`!`,
+            });
+            return;
+        }
+
+        const asciiTable = await clanMembersTable(clan);
 
         let message = `${heading(clan.name)}\n`;
+        message += `${bold(clan.tag)}\n`;
         message += `\`\`\`${clan.description}\n`;
-        message += `Members: ${clan.members}\n`;
+        message += `Members:  ${clan.members}\n`;
         message += `Location: ${clan.location.name}\n`;
-        message += `Donations Weekly: ${clan.donationsPerWeek}\n`;
+        message += `Donations Weekly:  ${clan.donationsPerWeek}\n`;
         message += `Required Trophies: ${clan.requiredTrophies}\n`;
         message += `Clan War Trophies: ${clan.clanWarTrophies}\n`;
-        message += `${table(dataTable, config)}\`\`\``;
-        //     );
+        message += `${asciiTable}\`\`\``;
 
         await interaction.reply({
             content: message,
-        })
+        });
     },
 };

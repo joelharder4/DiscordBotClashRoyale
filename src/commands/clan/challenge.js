@@ -17,6 +17,7 @@ module.exports = {
 
         const userProfile = await Player.findOne({ userId: interaction.user.id });
 
+        // if the user has not set their player tag
         if (!userProfile) {
             await interaction.reply({
                 content: `You need to set your player tag before you can challenge other users!\nUse \`/playertag\` to set your player tag.`,
@@ -25,16 +26,43 @@ module.exports = {
             return;
         }
 
-        // TODO: Check if the challenger has already challenged that person in the last 60 seconds
-
-        // TODO: Check if the users already have an active challenge between them
-
+        // if the user is challenging themselves
         if (targetUser.id === interaction.user.id) {
             await interaction.reply({
                 content: `You can't challenge yourself!`,
                 ephemeral: true,
             });
             return;
+        }
+
+        const challengeProfile = await Challenge.findOne({
+            userId1: interaction.user.id,
+            userId2: targetUser.id
+        }).sort({ startTime: -1 }); // Sort by startTime in descending order
+
+        if (challengeProfile) {
+            // if the users already have an active challenge between them
+            if (challengeProfile.status === "pending" || challengeProfile.status === "ongoing") {
+                await interaction.reply({
+                    content: `You already have a challenge with <@${targetUser.id}> that is ${challengeProfile.status}!`,
+                    ephemeral: true,
+                });
+                return;
+            }
+
+            const now = new Date();
+            const oneMinuteAgo = new Date(now.getTime() - 60000);
+
+            // if it was declined less than 60 seconds ago
+            if (challengeProfile.status === "declined" && challengeProfile.startTime >= oneMinuteAgo) {
+                const secondsLeft = Math.ceil((challengeProfile.startTime - oneMinuteAgo) / 1000);
+
+                await interaction.reply({
+                    content: `Please wait ${secondsLeft.toString()} seconds until you challenge <@${targetUser.id}> again!`,
+                    ephemeral: true,
+                });
+                return;
+            }
         }
 
         const accept = new ButtonBuilder()

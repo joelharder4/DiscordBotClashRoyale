@@ -8,7 +8,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('playertag')
         .setDescription('The bot will remember your Clash Royale Player Tag to use in other commands.')
-        .addStringOption((option) =>
+        .addStringOption((option) => // TODO: Change this to not required and present a modal if not set
 			option.setName('tag')
 				.setDescription('Your Clash Royale Player Tag without the hashtag.')
 				.setRequired(true)),
@@ -32,8 +32,6 @@ module.exports = {
                 });
                 return;
             }
-
-            console.log('\n\n\nPLAYER:\n', player);
 
             playerProfile = new Player({
                 _id: new mongoose.Types.ObjectId(),
@@ -67,8 +65,6 @@ module.exports = {
                 });
                 return;
             }
-
-            console.log('\n\n\nPLAYER:\n', player);
 
             const filter = { userId: userId };
             const update = {

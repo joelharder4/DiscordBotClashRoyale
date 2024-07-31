@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const { getCurrentTimeString } = require('../../utils/formattedTime');
+const { getCurrentTimeString } = require('../../utils/time');
 
 module.exports = {
     name: 'error',

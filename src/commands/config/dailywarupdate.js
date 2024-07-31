@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const EnabledJobs = require('../../schemas/enabledJobs');
 const PrimaryChannels = require('../../schemas/primaryChannels');
+const Clan = require('../../schemas/clanTag');
 const mongoose = require('mongoose');
 
 module.exports = {
@@ -16,6 +17,16 @@ module.exports = {
         if (!primaryChannelProfile) {
             await interaction.reply({
                 content: `You need to assign me a channel before you can use automated messages!\nUse \`/setchannel\` to set the channel.`,
+                ephemeral: true,
+            });
+            return;
+        }
+
+        // make sure the guild has a clan tag set
+        const guildClanProfile = await Clan.findOne({ guildId: guildId });
+        if (!guildClanProfile) {
+            await interaction.reply({
+                content: `You need to set a default clan tag for this server using \`/setserverclan\` so that I know which clan to check!`,
                 ephemeral: true,
             });
             return;

@@ -1,19 +1,64 @@
 const { table } = require('table');
 
 
-const currentRiverRaceTable = async (currentWar) => {
+const clanMembersTable = async (clan, maxRows = 25) => {
+
+    const memberList = clan.memberList;
+
+    const dataTable = [
+        ['Member', 'Trophies', 'Role', 'Last Online'],
+    ];
+
+    for (const member of memberList) {
+        if (memberList.indexOf(member) >= maxRows) {
+            dataTable.push(['...', '...', '...', '...']);
+            break;
+        }
+
+        const name = member.name;
+        const trophies = member.trophies.toString();
+        const role = member.role;
+
+        const date = new Date(
+            member.lastSeen.replace(
+                /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2}\.\d{3}Z)$/,
+                '$1-$2-$3T$4:$5:$6'
+            )
+        );
+        const lastOnline = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+        dataTable.push([name, trophies, role, lastOnline]);
+    }
+
+    const config = {
+        drawHorizontalLine: (lineIndex, rowCount) => {
+            return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
+        },
+    };
+
+    return table(dataTable, config);
+
+}
+
+
+const currentRiverRaceTable = async (currentWar, maxRows = 20) => {
 
     const participants = currentWar.clan.participants.reverse();
 
     const dataTable = [
-        ['Player', 'Medals', 'Decks', 'Medals/Deck', 'Boat Attacks'],
+        ['Player', 'Medals', 'Decks', 'Medals/Deck', 'Boat Atks'],
     ];
 
     for (const player of participants) {
+        if (participants.indexOf(player) >= maxRows) {
+            dataTable.push(['...', '...', '...', '...', '...']);
+            break;
+        }
+
         const name = player.name;
         const fame = player.fame.toString();
         const decksUsedToday = (4 - player.decksUsedToday).toString();
-        const famePerDeck = player.decksUsed ? "N/A" : Math.round(player.fame / player.decksUsed).toString();
+        const famePerDeck = player.decksUsed ? Math.round(player.fame / player.decksUsed).toString() : "N/A";
         const boatAttacks = player.boatAttacks.toString();
 
         dataTable.push([name, fame, decksUsedToday, famePerDeck, boatAttacks]);
@@ -30,4 +75,5 @@ const currentRiverRaceTable = async (currentWar) => {
 
 module.exports = {
     currentRiverRaceTable,
+    clanMembersTable,
 }
