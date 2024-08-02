@@ -80,20 +80,5 @@ module.exports = {
             });
 
         }
-
-
-        
-        
-        // if the guild is already in the database
-            
-            // if the job is already enabled
-                // remove the job from the enabledJobs array
-           
-            // else
-                // add the job to the enabledJobs array
-        
-        // else if the guild is not in the database
-            // add guild to the database
-            // add job to the enabledJobs array
     },
 };

@@ -4,8 +4,9 @@ const playerTagSchema = new Schema({
     _id: Schema.Types.ObjectId,
     userId: String,
     playerTag: String,
-    userName: { type: String, required: false },
-    playerName: { type: String, required: false },
+    userName: String,
+    playerName: String,
+    roleShuffleParticipant: { type: Boolean, default: false },
 });
 
-module.exports = model("PlayerTag", playerTagSchema, "playertags");
+module.exports = model("PlayerTag", playerTagSchema, "playertag");

@@ -7,6 +7,6 @@ module.exports = {
         
         const localTime = getCurrentTimeString();
 
-        console.log(`${localTime}:   ` + chalk.red(`[Database]: Disconnected!`));
+        console.log(`${localTime}   ` + chalk.red(`[Database]: Disconnected!`));
     },
 };

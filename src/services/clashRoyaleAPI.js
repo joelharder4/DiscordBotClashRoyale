@@ -23,7 +23,7 @@ const getRiverRaceLog = async (clanTag) => {
 
 const getCurrentRiverRace = async (clanTag) => {
     const riverRace = await getRequest(`/clans/%23${clanTag}/currentriverrace`);
-    
+
     if (riverRace.status === 200) {
         return riverRace.data;
     }

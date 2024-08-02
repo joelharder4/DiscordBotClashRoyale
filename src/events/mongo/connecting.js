@@ -7,6 +7,6 @@ module.exports = {
         
         const localTime = getCurrentTimeString();
 
-        console.log(`${localTime}:   ` + chalk.cyan(`[Database]: Connecting...`));
+        console.log(`${localTime}   ` + chalk.cyan(`[Database]: Connecting...`));
     },
 };

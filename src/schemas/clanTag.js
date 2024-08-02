@@ -2,10 +2,10 @@ const { Schema, model } = require('mongoose');
 
 const clanTagSchema = new Schema({
     _id: Schema.Types.ObjectId,
-    guildId: String,
-    clanTag: String,
-    guildName: { type: String, required: false },
-    clanName: { type: String, required: false },
+    guildId: {type: String, required: true},
+    clanTag: {type: String, required: true},
+    guildName: String,
+    clanName: String,
 });
 
 module.exports = model("ClanTag", clanTagSchema, "clantags");

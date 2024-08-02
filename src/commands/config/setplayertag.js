@@ -6,9 +6,9 @@ const { getPlayer } = require('../../services/clashRoyaleAPI');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('playertag')
+        .setName('setplayertag')
         .setDescription('The bot will remember your Clash Royale Player Tag to use in other commands.')
-        .addStringOption((option) => // TODO: Change this to not required and present a modal if not set
+        .addStringOption((option) =>
 			option.setName('tag')
 				.setDescription('Your Clash Royale Player Tag without the hashtag.')
 				.setRequired(true)),

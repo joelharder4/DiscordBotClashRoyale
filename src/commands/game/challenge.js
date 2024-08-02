@@ -20,7 +20,7 @@ module.exports = {
         // if the user has not set their player tag
         if (!userProfile) {
             await interaction.reply({
-                content: `You need to set your player tag before you can challenge other users!\nUse \`/playertag\` to set your player tag.`,
+                content: `You need to set your player tag before you can challenge other users!\nUse \`/setplayertag\` to set your player tag.`,
                 ephemeral: true,
             });
             return;

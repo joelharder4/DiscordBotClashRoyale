@@ -41,6 +41,7 @@ const clanMembersTable = async (clan, maxRows = 25) => {
 }
 
 
+
 const currentRiverRaceTable = async (currentWar, maxRows = 20) => {
 
     const participants = currentWar.clan.participants.reverse();
@@ -73,7 +74,47 @@ const currentRiverRaceTable = async (currentWar, maxRows = 20) => {
     return table(dataTable, config);
 }
 
+
+const cardLevelTable = async (playerCards) => {
+
+    const cardLevelCounts = {};
+    for (const card of playerCards) {
+        // for some reason level 15 is not included in maxLevel
+        const level = 14 - (card.maxLevel - card.level);
+        if (level in cardLevelCounts) {
+            cardLevelCounts[level] += 1;
+        } else {
+            cardLevelCounts[level] = 1;
+        }
+    }
+
+    const dataTable = [
+        ['Level', 'Count'],
+    ];
+
+    for (let i = 1; i  <= 15; i++) {
+        if (i in cardLevelCounts) {
+            dataTable.push([i.toString(), cardLevelCounts[i].toString()]);
+        } else {
+            dataTable.push([i.toString(), '0']);
+        }
+    }
+
+    const config = {
+        drawHorizontalLine: (lineIndex, rowCount) => {
+            return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
+        },
+    };
+
+    return table(dataTable, config);
+
+}
+
+
+
+
 module.exports = {
     currentRiverRaceTable,
     clanMembersTable,
+    cardLevelTable,
 }

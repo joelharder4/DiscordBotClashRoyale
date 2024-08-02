@@ -6,7 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('setchannel')
         .setDescription('Sets the channel that this bot will send automatic messages in.')
-        .addChannelOption((option) => // TODO: Change this to not required and present a modal if not set
+        .addChannelOption((option) =>
             option.setName('channel')
                 .setDescription('The channel this bot will use.')
                 .setRequired(true)),

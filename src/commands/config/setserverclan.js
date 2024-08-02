@@ -8,7 +8,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('setserverclan')
         .setDescription('The bot will save this clan tag as the default tag in this server.')
-        .addStringOption((option) => // TODO: Change this to not required and present a modal if not set
+        .addStringOption((option) =>
 			option.setName('tag')
 				.setDescription('The Clash Royale Clan Tag without the hashtag.')
 				.setRequired(true)),

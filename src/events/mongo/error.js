@@ -7,6 +7,6 @@ module.exports = {
 
         const localTime = getCurrentTimeString();
 
-        console.log(`${localTime}:   ` + chalk.red(`[Database]: Error!\n${error}`));
+        console.log(`${localTime}   ` + chalk.red(`[Database]: Error!\n${error}`));
     },
 };

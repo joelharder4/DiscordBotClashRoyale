@@ -71,6 +71,24 @@ function isDateOlderThanXDays(date, days) {
     return date < daysAgo;
 }
 
+
+
+function isDateNewerThanXHours(date, hours) {
+    const now = new Date();
+    const hoursInMillis = hours * 60 * 60 * 1000;
+    const hoursAgo = new Date(now.getTime() - hoursInMillis);
+    
+    return date > hoursAgo;
+}
+
+function isDateNewerThanXDays(date, days) {
+    const now = new Date();
+    const daysInMillis = days * 24 * 60 * 60 * 1000;
+    const daysAgo = new Date(now.getTime() - daysInMillis);
+
+    return date > daysAgo;
+}
+
 module.exports = {
     getFormattedTimeStringWithSeconds,
     getFormattedTimeString,
@@ -80,4 +98,6 @@ module.exports = {
     isDateOlderThanXMinutes,
     isDateOlderThanXHours,
     isDateOlderThanXDays,
+    isDateNewerThanXHours,
+    isDateNewerThanXDays,
 }

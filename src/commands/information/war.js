@@ -23,6 +23,19 @@ module.exports = {
         const periodType = war.periodType;
         let dayType;
 
+        const today = new Date();
+        let dayNum = today.getDay();
+        switch (dayNum) {
+            case 0:
+                dayNum = 4;
+                break;
+            case 4, 5, 6:
+                dayNum = dayNum - 3;
+                break;
+            default:
+                break;
+        }
+
         if (periodType.toLowerCase() == "training") {
             dayType = "Training Day";
         } else if (periodType.toLowerCase() == "war_day") {
@@ -31,7 +44,7 @@ module.exports = {
             dayType = "Colosseum";
         }
         
-        const message = `${heading("Current War Summary")}\n${bold(war.clan.name)} | ${bold(dayType)}\`\`\`${asciiTable}\`\`\``;
+        const message = `${heading("Current War Summary")}\n${bold(war.clan.name)} | ${bold(dayType)} ${bold(dayNum)}\`\`\`${asciiTable}\`\`\``;
 
         await interaction.reply({
             content: message,

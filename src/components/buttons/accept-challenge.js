@@ -26,7 +26,7 @@ module.exports = {
 
         if (!challengedProfile) {
             await interaction.reply({
-                content: `You need to set your player tag before you can accept challenges!\nUse \`/playertag\` to set your player tag.`,
+                content: `You need to set your player tag before you can accept challenges!\nUse \`/setplayertag\` to set your player tag.`,
                 ephemeral: true,
             });
         }

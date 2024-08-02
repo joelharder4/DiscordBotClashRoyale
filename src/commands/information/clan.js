@@ -33,6 +33,7 @@ module.exports = {
         if (!clan) {
             await interaction.reply({
                 content: `Could not find a clan with the tag \`#${clanTag}\`!`,
+                emphemeral: true,
             });
             return;
         }

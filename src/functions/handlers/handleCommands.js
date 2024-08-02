@@ -18,7 +18,7 @@ module.exports = (client) => {
                 const command = require(`../../commands/${folder}/${file}`);
                 commands.set(command.data.name, command);
 
-                if (folder === 'tools' || testMode) {
+                if (folder === 'test' || testMode) {
                     testCommandArray.push(command.data.toJSON());
                     // console.log(`Test command loaded: ${command.data.name}`);
                 } else {
