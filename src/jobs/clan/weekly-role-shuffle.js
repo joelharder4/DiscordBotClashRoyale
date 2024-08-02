@@ -14,7 +14,7 @@ module.exports = {
     // 'second (optional) minute hour dayofmonth month dayofweek'
     // IMPORTANT: new battle day starts at 5:34am EST?
     //            and wars go from monday to sunday 5:34am
-    schedule: '30 * * * * *', // '0 0 12 * * 1' = 12:00:00pm on Monday
+    schedule: '0 0 12 * * 1', // = 12:00:00pm on Monday
     async execute(client) {
 
         // TODO: test this job with multiple users

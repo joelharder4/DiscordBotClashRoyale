@@ -11,7 +11,7 @@ module.exports = {
     // detailed schedule info: https://www.npmjs.com/package/node-schedule
     // 'second (optional) minute hour dayofmonth month dayofweek'
     // IMPORTANT: new battle day starts at 5:34am EST? new war week start on Monday
-    schedule: '0 * * * * *', // '0 29 5 * * 1', // = 5:29:00am on Mondays
+    schedule: '0 29 5 * * 1', // = 5:29:00am on Mondays
     async execute(client) {
 
         const clanGuildProfiles = await Clan.find({});
