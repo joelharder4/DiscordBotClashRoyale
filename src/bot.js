@@ -27,6 +27,7 @@ for (const folder of functionsFolder) {
 client.handleEvents();
 client.handleCommands();
 client.handleComponents();
+client.handleJobs();
 client.login(token);
 
 (async () => {
