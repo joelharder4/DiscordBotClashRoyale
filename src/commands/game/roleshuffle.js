@@ -36,7 +36,7 @@ module.exports = {
             await userPlayerProfile.save().catch(console.error);
 
             await interaction.reply({
-                content: `<@${user.id}> are now participating in the role shuffle! Yippee!`,
+                content: `<@${interaction.user.id}> is now participating in the role shuffle! Yippee!`,
             });
 
         } else {
@@ -45,7 +45,7 @@ module.exports = {
             await userPlayerProfile.save().catch(console.error);
 
             await interaction.reply({
-                content: `Congratulations <@${user.id}>, you coward! You aren't a part of the based role shuffle anymore.`,
+                content: `Congratulations <@${interaction.user.id}>, you coward! You aren't a part of the based role shuffle anymore.`,
             });
 
         }

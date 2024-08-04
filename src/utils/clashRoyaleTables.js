@@ -1,4 +1,4 @@
-const { table } = require('table');
+const { table, getBorderCharacters } = require('table');
 
 
 const clanMembersTable = async (clan, maxRows = 25) => {
@@ -107,9 +107,57 @@ const cardLevelTable = async (playerCards) => {
     };
 
     return table(dataTable, config);
-
 }
 
+
+
+
+// deck should be an array of 8 card objects
+// each card object has a name, rarity, and cost property
+const deckTable = async (deck) => {
+    
+    const dataTable = [];
+    let row = [];
+
+    for (let i = 0; i < 8; i++) {
+        const card = deck[i];
+        const name = card.name ?? "Joe Biden";
+        const rarity = card.rarity ?? "Joever";
+        let elixir = card.cost.toString() ?? "11";
+        elixir += " Elixir";
+
+        let info = `${name}\n(${rarity})\n${elixir}`;
+        if (i < 4) info += '\n';
+
+        row.push(info);
+
+        if (i === 3) {
+            dataTable.push(row);
+            row = [];
+        }
+    }
+
+    dataTable.push(row);
+
+    // max width of a discord code block is 65 characters
+    const config = {
+        border: getBorderCharacters(`void`),
+        columnDefault: {
+            paddingLeft: 0,
+            paddingRight: 1,
+        },
+        columns: [
+            { alignment: 'center', width: 15 },
+            { alignment: 'center', width: 15 },
+            { alignment: 'center', width: 16 },
+            { alignment: 'center', width: 16 },
+        ],
+        
+        drawHorizontalLine: () => false,
+    };
+
+    return table(dataTable, config);
+}
 
 
 
@@ -117,4 +165,5 @@ module.exports = {
     currentRiverRaceTable,
     clanMembersTable,
     cardLevelTable,
+    deckTable,
 }

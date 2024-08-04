@@ -39,17 +39,41 @@ module.exports = {
 
         const cardLevels = await cardLevelTable(player.cards);
 
+        const leagueNames = {
+            1: "Challenger I",
+            2: "Challenger II",
+            3: "Challenger III",
+            4: "Master I",
+            5: "Master II",
+            6: "Master III",
+            7: "Champion",
+            8: "Grand Champion",
+            9: "Royal Champion",
+            10: "Ultimate Champion",
+        };
+
         let message = `${heading(player.name)}\n`;
         message += `**${player.tag}** | **Lvl ${player.expLevel}**\n`;
-        message += `Trophies: ${player.trophies}\n`;
-        message += `Battles Played: ${player.battleCount}\n`;
-        message += `Battles Won: ${player.wins}\n`;
-        // message += `War Day Wins: ${player.warDayWins}\n`; // not sure what exactly this means, its usually single digits
-        message += `3-Crown Wins: ${player.threeCrownWins}\n`;
-        message += `Losses: ${player.losses}\n`;
-        message += `Cards Found: ${player.cards.length} of 115 {${100 * Math.round(player.cards.length / 115)}%}\n`;
-        message += `Total Donations:  ${player.totalDonations}\n`;
-        message += `Donations Received: ${player.donationsReceived}\n`;
+        message += `Clan: **${player.clan.name}** \`${player.clan.tag}\`\n`;
+        message += `Trophies: **${player.trophies}**\n`;
+        message += `Best Trophies: **${player.bestTrophies}**\n`;
+        message += `Legacy Best Trophies: **${player.legacyTrophyRoadHighScore}**\n`;
+        message += `Battles Played: **${player.battleCount}**\n`;
+        message += `Battles Won: **${player.wins}**\n`;
+        message += `3-Crown Wins: **${player.threeCrownWins}**\n`;
+        message += `Losses: **${player.losses}**\n`;
+        // message += `War Day Wins: ${player.warDayWins}\n`; // this probably refers to the the number of river race wins
+        message += `Cards Found: **${player.cards.length} of 115 (${100 * Math.round(player.cards.length / 115)}%)**\n`;
+        message += `Total Donations:  **${player.totalDonations}**\n`;
+        message += `Donations Received: **${player.donationsReceived}**\n`;
+        message += `Current Favourite Card: **${player.currentFavouriteCard.name}**\n`;
+        message += `### Path of Legends:\n`;
+        message += ` This Season: **${leagueNames[player.currentPathOfLegendSeasonResult.leagueNumber]}**\n`;
+        message += ` Last Season: **${leagueNames[player.lastPathOfLegendSeasonResult.leagueNumber]}**\n`;
+        message += ` Best Season: **${leagueNames[player.bestPathOfLegendSeasonResult.leagueNumber]}**\n`;
+        message += `### Goblin Queen's Journey:\n`;
+        message += ` Trophies: **${player.progress['goblin-road'].trophies}**\n`;
+        message += ` Best Trophies: **${player.progress['goblin-road'].bestTrophies}**\n`;
 
         message += `\n**Card Levels**\n`;
 

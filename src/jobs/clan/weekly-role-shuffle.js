@@ -3,7 +3,6 @@ const PrimaryChannels = require('../../schemas/primaryChannels');
 const Player = require('../../schemas/playerTag');
 const Clan = require('../../schemas/clanTag');
 const ClanWarWeek = require('../../schemas/clanWarWeek');
-const PlayerWarWeek = require('../../schemas/playerWarWeek');
 const RoleShuffle = require('../../schemas/roleShuffle');
 const { getCurrentTimeString, isDateOlderThanXDays } = require('../../utils/time');
 const mongoose = require('mongoose');

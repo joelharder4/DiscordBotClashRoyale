@@ -2,7 +2,7 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 
-const testMode = true; // change to false to register commands globally
+const testMode = false; // change to false to register commands globally
 
 module.exports = (client) => {
     client.handleCommands = async () => {
