@@ -82,8 +82,6 @@ module.exports = {
         const gptResponse = await completionWithSystemPrompt(message, harshPlayerCriticPrompt);
         const gptMessage = gptResponse.choices[0].message.content;
 
-        // console.log('ChatGPT response:', gptResponse);
-
         // max length of a discord message is 2000 characters
         if (gptMessage.length > 1940) {
             const firstPart = gptMessage.slice(0, 1990);
@@ -97,7 +95,7 @@ module.exports = {
         } else {
 
             await interaction.editReply({
-                content: `## Official rating of ${player.name} (#${player.tag})\n` + gptMessage,
+                content: `## Official rating of ${player.name} (${player.tag})\n` + gptMessage,
             });
             
         }
