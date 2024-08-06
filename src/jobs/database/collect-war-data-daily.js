@@ -16,7 +16,6 @@ module.exports = {
  
         const clanGuildProfiles = await Clan.find({});
         const processedClans = [];
-        // TODO: add clanName and periodType to the collect data job
 
         console.log(`${getCurrentTimeString()}   ` + chalk.green(`[Running] Job ${this.name}: Started collecting war data`));
 
