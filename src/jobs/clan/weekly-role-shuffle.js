@@ -4,6 +4,7 @@ const Player = require('../../schemas/playerTag');
 const Clan = require('../../schemas/clanTag');
 const ClanWarWeek = require('../../schemas/clanWarWeek');
 const RoleShuffle = require('../../schemas/roleShuffle');
+const ShuffleParticipant = require('../../schemas/shuffleParticipant');
 const { getCurrentTimeString, isDateOlderThanXDays } = require('../../utils/time');
 const mongoose = require('mongoose');
 
@@ -16,12 +17,14 @@ module.exports = {
     schedule: '0 0 12 * * 1', // = 12:00:00pm on Monday
     async execute(client) {
 
-        // TODO: test this job with multiple users
+        // TODO: all of the database tables for this should be unique for each guild
+        //       the issue is that players in all guilds are competing in the same role shuffle
         
         const primaryChannels = await PrimaryChannels.find({});
         primaryChannels.forEach( async (channelProfile) => {
 
             const guildId = channelProfile.guildId;
+            if (client.testMode && guildId !== client.testGuildId) return;
 
             const clanProfile = await Clan.findOne({ guildId: guildId });
             if (!clanProfile) {
@@ -38,14 +41,19 @@ module.exports = {
 
             const roleShuffleParticipants = [];
             for (const member of clanWarWeekProfile.participants) {
+                // use the player tag to find the userId
                 const playerProfile = await Player.findOne({ playerTag: member.playerTag });
                 if (!playerProfile) {
-                    // this just means that the player has not set their player tag using /setplayertag
                     continue;
                 }
 
-                if (playerProfile.roleShuffleParticipant) {
-                    roleShuffleParticipants.push(playerProfile);
+                const shuffleProfile = await ShuffleParticipant.findOne({ userId: playerProfile.userId, guildId: guildId });
+                if (!shuffleProfile) {
+                    continue;
+                }
+
+                if (shuffleProfile.optedIn) {
+                    roleShuffleParticipants.push(member);
                 }
             }
 
@@ -55,9 +63,8 @@ module.exports = {
                 return;
             }
 
-            const highestFamePlayers = [];
-            const lowestFamePlayers = [];
-            const leaderIsHighest = false;
+            let highestFamePlayers = [];
+            let lowestFamePlayers = [];
 
             roleShuffleParticipants.forEach( async (participant) => {
 
@@ -69,11 +76,9 @@ module.exports = {
 
                 if (participant.fame > highestFamePlayers[0].fame) {
                     highestFamePlayers = [participant];
-                    leaderIsHighest = participant.role.toLowerCase() === 'leader';
 
                 } else if (participant.fame === highestFamePlayers[0].fame) {
                     highestFamePlayers.push(participant);
-                    leaderIsHighest = participant.role.toLowerCase() === 'leader' ?? leaderIsHighest;
                 }
 
                 if (participant.fame < lowestFamePlayers[0].fame && participant.fame > 0) {
@@ -93,96 +98,85 @@ module.exports = {
                 return;
             }
 
-            message += `The **most omega humamongus skilled** player(s) who got ${highestFamePlayers[0].fame} medals in the clan war this week:\n`;
+            message += `### The **most skilled** player(s) who got ${highestFamePlayers[0].fame} medals:\n`;
 
-            highestFamePlayers.forEach( async (participant) => {
+            for (const participant of highestFamePlayers) {
                 const role = participant.role.toLowerCase();
-                const name = participant.playerName;
+                const name = participant.name;
 
                 if (role === 'member') {
-                    message += `🎉 **${name}**, who will get promoted to **Elder**! 🎉\n`;
+                    message += `- **${name}**, who will get promoted to **Elder**! <a:yippee:1269827923985305658>\n`;
 
                 } else if (role === 'elder') {
-                    message += `🎉 **${name}**, who will get promoted to **Co-Leader**! 🎉\n`;
+                    message += `- **${name}**, who will get promoted to **Co-Leader**! <a:yippee:1269827923985305658>\n`;
 
                 } else if (role === 'coleader') {
 
-                    // if the leader of the clan is also one of the highest players
-                    if (leaderIsHighest) {
+                    const roleShuffleProfile = await RoleShuffle.findOne({ playerTag: participant.playerTag }, null, { sort: { date: -1 } });
+                    let shuffleDate = now;
+                    let highestFame = false;
 
-                        message += `🎉 **${name}**, who is currently **Co-Leader**! Unfortunately for them, the Leader of the clan tied with them, so they wont be getting promoted. However, they have a chance to become Leader if they win again next week! 🎉\n`;
+                    if (roleShuffleProfile) {
+                        shuffleDate = roleShuffleProfile.date;
+                        highestFame = roleShuffleProfile.highestFame;
+                    }
 
-                        // mark in the datebase that they won the role shuffle this week
-                        const roleShuffleProfile = new RoleShuffle({
-                            _id: new mongoose.Types.ObjectId(),
-                            playerTag: participant.playerTag,
-                            highestFame: true,
-                            lowestFame: false,
-                            date: now,
-                        });
-                        roleShuffleProfile.save().catch(console.error);
+                    if (isDateOlderThanXDays(shuffleDate, 8)) {
+                        console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Warning] Event weekly-role-shuffle: Role shuffle profile for player ${participant.playerTag} in clan ${clanProfile.clanTag} is too old! Assuming they did not win last week.`));
+                        highestFame = false;
+                    }
+
+                    // if they won last week
+                    if (highestFame && highestFamePlayers.length === 1) {
+                        message += `- **${name}**, who is currently **Co-Leader**! Since this is the second consecutive win for them, they will be promoted to **Leader**. All Hail ${name}! <a:yippee:1269827923985305658>\n`;
+                    
+                    } else if (highestFame && highestFamePlayers.length > 1) {
+                        message += `- **${name}**, who is currently **Co-Leader**! They also won last week but unfortunately for them, it ended in a tie, so they wont be getting promoted <:mimimimimi:1266131684529537065>. However, they keep their chance to become Leader if they win again next week!\n`;
 
                     } else {
-
-                        // TODO: check if they won the role shuffle last week
-                        const roleShuffleProfile = await RoleShuffle.findOne({ playerTag: participant.playerTag }, null, { sort: { date: -1 } });
-                        if (!roleShuffleProfile) {
-                            console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Warning] Event weekly-role-shuffle: Role shuffle profile not found for player #${participant.playerTag} in clan #${clanProfile.clanTag}!`));
-                            return;
-                        }
-
-                        if (!isDateOlderThanXDays(roleShuffleProfile.date, 8)) {
-                            console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Warning] Event weekly-role-shuffle: Role shuffle profile for player ${participant.playerTag} in clan ${clanProfile.clanTag} is too old! Assuming they did not win last week.`));
-                            roleShuffleProfile.highestFame = false;
-                        }
-
-                        // if they won last week
-                        if (roleShuffleProfile.highestFame) {
-                            message += `🎉 **${name}**, who is currently **Co-Leader**! Since this is the second consecutive win for them, they will be promoted to **Leader**. All Hail ${name}! 🎉\n`;
-
-                        } else {
-                            message += `🎉 **${name}**, who is currently **Co-Leader**! In order to become Leader, the rules state that you have to win 2 consecutive weeks. If ${name} can squeak out a win again next week, they'll become the new Leader! 🎉\n`;
-
-                            // mark in the datebase that they won the role shuffle this week
-                            const roleShuffleProfile = new RoleShuffle({
-                                _id: new mongoose.Types.ObjectId(),
-                                playerTag: participant.playerTag,
-                                highestFame: true,
-                                lowestFame: false,
-                                date: now,
-                            });
-                            roleShuffleProfile.save().catch(console.error);
-                        }
+                        message += `- **${name}**, who is currently **Co-Leader**! In order to become Leader, the rules state that you have to win 2 consecutive weeks. If ${name} can squeak out a win again next week, they'll become the new Leader! <a:yippee:1269827923985305658>\n`;
                     }
+
+                    // mark in the datebase that they won the role shuffle this week
+                    const newRoleShuffleProfile = new RoleShuffle({
+                        _id: new mongoose.Types.ObjectId(),
+                        playerTag: participant.playerTag,
+                        highestFame: true,
+                        lowestFame: false,
+                        date: now,
+                    });
+                    newRoleShuffleProfile.save().catch(console.error);
 
                 } else if (role === 'leader') {
 
                     // TODO: change this messsage to a ChatGPT response
-                    message += `🎉 **${name}**, who is already the **Leader**! Everyone wants to be like ${name} because they are so cool and the best gamer to ever live. 🎉\n`;
+                    message += `- **${name}**, who is already the **Leader**! Everyone wants to be like ${name} because they are so cool and the best gamer to ever live. <a:yippee:1269827923985305658><a:yippee:1269827923985305658><a:yippee:1269827923985305658>\n`;
 
                 }
-            });
+            }
 
 
-            message += `\nNow for the **most cooked and omega sus** player(s) who got ${highestFamePlayers[0].fame} medals in the clan war this week:\n`;
 
-            lowestFamePlayers.forEach( async (participant) => {
+
+            message += `\n### The **most cooked** player(s) who only got **${lowestFamePlayers[0].fame} medals**:\n`;
+
+            for (const participant of lowestFamePlayers) {
                 const role = participant.role.toLowerCase();
-                const name = participant.playerName;
+                const name = participant.name;
 
                 if (role === 'member') {
                     // TODO: Change this to a ChatGPT response
-                    message += `💀 **${name}**, who will be demoted to **Member**! Oh, wait. They're already a member... Laugh at this user! They're Joever. 💀\n`;
+                    message += `- 💀 **${name}** 💀 who will be demoted to **Member**! Oh, wait. They're already a member... Laugh at this user! They're Joever. 💀\n`;
 
                 } else if (role === 'elder') {
-                    message += `💀 **${name}**, who will be demoted to **Member**! 💀\n`;
+                    message += `- 💀 **${name}** 💀 who will be demoted to **Member**! 💀\n`;
 
                 } else if (role === 'coleader') {
-                    message += `💀 **${name}**, who will be demoted to **Elder**! 💀\n`;
+                    message += `- 💀 **${name}** 💀 who will be demoted to **Elder**! 💀\n`;
 
                 } else if (role === 'leader') {
                     // TODO: Change this to a ChatGPT response
-                    message += `💀 **${name}**, who is currently the **Leader**! 💀💀💀 Honestly, how did they fall off so hard? It's kinda cringe tbh and they should be ashamed. Someone has to replace them ASAP but I wouldn't be suprised if they demoted themselves out of shame. 💀\n`;
+                    message += `- 💀 **${name}** 💀 who is currently the **Leader**! Honestly, how did they fall off so hard? It's kinda cringe tbh and they should be ashamed. Someone has to replace them ASAP but I wouldn't be suprised if they demoted themselves out of shame. <:mimimimimi:1266131684529537065><:mimimimimi:1266131684529537065><:mimimimimi:1266131684529537065>\n`;
 
                     // mark in the datebase that they won the role shuffle this week
                     const roleShuffleProfile = new RoleShuffle({
@@ -194,7 +188,7 @@ module.exports = {
                     });
                     roleShuffleProfile.save().catch(console.error);
                 }
-            });
+            }
 
             channel.send(message);
         });

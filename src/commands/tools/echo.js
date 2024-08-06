@@ -5,7 +5,7 @@ const { britishAccentPrompt } = require('../../utils/chatGPTPrompts');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('echo')
-        .setDescription("The bot will repeat the message you provide. Any accidental Bri'ish translations are purely coincidental.")
+        .setDescription("The bot will repeat the message you provide. Any Bri'ish translations are purely coincidental.")
         .addStringOption((option) =>
 			option.setName('message')
 				.setDescription('The message the bot will repeat.')

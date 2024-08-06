@@ -6,6 +6,7 @@ const playerWarDaySchema = new Schema({
     name: {type: String, required: true},
     fame: {type: Number, required: true},
     decksUsed: {type: Number, required: true},
+    decksUsedToday: {type: Number, required: true},
     role: { 
         type: String,
         enum: ["elder", "member", "leader", "coleader"],

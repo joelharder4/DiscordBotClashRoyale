@@ -8,7 +8,7 @@ const playerWarWeekSchema = new Schema({
     decksUsed: {type: Number, required: true},
     role: { 
         type: String,
-        enum: ["elder", "member", "leader", "coleader"],
+        enum: ["elder", "member", "coleader", "leader"],
         // according to supercell docs it can also be "not_member" and "admin"?
         required: true,
     },

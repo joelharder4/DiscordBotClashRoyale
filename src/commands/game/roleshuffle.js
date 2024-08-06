@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
 const Player = require('../../schemas/playerTag');
 const PrimaryChannels = require('../../schemas/primaryChannels');
+const ShuffleParticipant = require('../../schemas/shuffleParticipant');
+const mongoose = require('mongoose');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -29,24 +31,36 @@ module.exports = {
             return;
         }
 
-        // if they are not currently a participant
-        if (!userPlayerProfile.roleShuffleParticipant) {
+        const shuffleParticipantProfile = await ShuffleParticipant.findOne({ userId: userId, guildId: guildId });
 
-            userPlayerProfile.roleShuffleParticipant = true;
-            await userPlayerProfile.save().catch(console.error);
+        if (!shuffleParticipantProfile) {
+
+            const newShuffleParticipant = new ShuffleParticipant({
+                _id: new mongoose.Types.ObjectId(),
+                userId: userId,
+                guildId: guildId,
+                optedIn: true,
+            });
+            newShuffleParticipant.save().catch(console.error);
 
             await interaction.reply({
-                content: `<@${interaction.user.id}> is now participating in the role shuffle! Yippee!`,
+                content: `<@${userId}> is now participating in the role shuffle! Yippee!`,
             });
 
         } else {
 
-            userPlayerProfile.roleShuffleParticipant = false;
-            await userPlayerProfile.save().catch(console.error);
+            if (shuffleParticipantProfile.optedIn) {
+                await interaction.reply({
+                    content: `<@${userId}> is a coward who is scared of role shuffling! They are no longer participating in it.`,
+                });
+            } else {
+                await interaction.reply({
+                    content: `<@${userId}> is now participating in the role shuffle! Yippee!`,
+                });
+            }
 
-            await interaction.reply({
-                content: `Congratulations <@${interaction.user.id}>, you coward! You aren't a part of the based role shuffle anymore.`,
-            });
+            shuffleParticipantProfile.optedIn = !shuffleParticipantProfile.optedIn;
+            await shuffleParticipantProfile.save().catch(console.error);
 
         }
     },

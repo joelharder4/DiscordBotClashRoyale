@@ -75,6 +75,39 @@ const currentRiverRaceTable = async (currentWar, maxRows = 20) => {
 }
 
 
+const clanWarDayTable = async (war, maxRows = 20) => {
+
+    const participants = war.participants;
+
+    const dataTable = [
+        ['Player', 'Medals', 'Decks', 'Medals/Deck', 'Role'],
+    ];
+
+    for (const player of participants) {
+        if (participants.indexOf(player) >= maxRows) {
+            dataTable.push(['...', '...', '...', '...', '...']);
+            break;
+        }
+
+        const name = player.name;
+        const fame = player.fame.toString();
+        const decksUsedToday = (4 - player.decksUsedToday).toString();
+        const famePerDeck = player.decksUsed > 0 ? Math.round(player.fame / player.decksUsed).toString() : "N/A";
+
+        dataTable.push([name, fame, decksUsedToday, famePerDeck, player.role]);
+    }
+
+    const config = {
+        drawHorizontalLine: (lineIndex, rowCount) => {
+            return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
+        },
+    };
+
+    return table(dataTable, config);
+}
+
+
+
 const cardLevelTable = async (playerCards) => {
 
     const cardLevelCounts = {};
@@ -164,6 +197,7 @@ const deckTable = async (deck) => {
 module.exports = {
     currentRiverRaceTable,
     clanMembersTable,
+    clanWarDayTable,
     cardLevelTable,
     deckTable,
 }

@@ -19,8 +19,10 @@ module.exports = {
         clanGuildProfiles.forEach( async (clanGuild) => {
 
             const clanTag = clanGuild.clanTag;
-            const war = await getCurrentRiverRace(clanTag);
-            const clan = await getClan(clanTag);
+            const [war, clan] = await Promise.all([
+                getCurrentRiverRace(clanTag),
+                getClan(clanTag)
+            ]).catch(console.error);
 
             if (!war || !clan) {
                 console.error(`${getCurrentTimeString()}   ` + chalk.red(`[Error] Job collect-war-data-weekly: Nothing retrieved from API for clan ${clanTag}`));
@@ -30,13 +32,13 @@ module.exports = {
             const now = new Date();
 
             const playerList = [];
-            war.clan.participants.reverse().forEach( async (member) => {
+            for (const member of war.clan.participants) {
 
                 // some information about the player comes from a different API call
                 const clanMember = clan.memberList.find( (clanMember) => clanMember.tag === member.tag );
                 if (!clanMember) {
                     console.error(`${getCurrentTimeString()}   ` + chalk.red(`[Error] Job collect-war-data-weekly: Found clan member tag \`#${member.tag}\` in the river race data but not in the clan data for clan \`#${clanTag}\``));
-                    return;
+                    continue;
                 }
 
                 const warWeekPlayer = new PlayerWarWeek({
@@ -51,7 +53,7 @@ module.exports = {
 
                 playerList.push(warWeekPlayer);
                 warWeekPlayer.save().catch(console.error);
-            });
+            }
             
 
             const clanWarWeek = new ClanWarWeek({
@@ -66,6 +68,6 @@ module.exports = {
 
         });
 
-        console.log(`${getCurrentTimeString()}   ` + chalk.green(`[Complete] Job collect-war-data-weekly: Finished collecting war data`));
+        console.log(`${getCurrentTimeString()}   ` + chalk.green(`[Running] Job collect-war-data-weekly: job began collecting war data for all guilds`));
     }
 }

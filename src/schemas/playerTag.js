@@ -6,7 +6,6 @@ const playerTagSchema = new Schema({
     playerTag: String,
     userName: String,
     playerName: String,
-    roleShuffleParticipant: { type: Boolean, default: false },
 });
 
 module.exports = model("PlayerTag", playerTagSchema, "playertag");
