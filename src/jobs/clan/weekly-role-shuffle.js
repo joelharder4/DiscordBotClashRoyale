@@ -1,11 +1,11 @@
-const chalk = require('chalk');
 const PrimaryChannels = require('../../schemas/primaryChannels');
 const Player = require('../../schemas/playerTag');
 const Clan = require('../../schemas/clanTag');
 const ClanWarWeek = require('../../schemas/clanWarWeek');
 const RoleShuffle = require('../../schemas/roleShuffle');
 const ShuffleParticipant = require('../../schemas/shuffleParticipant');
-const { getCurrentTimeString, isDateOlderThanXDays } = require('../../utils/time');
+const { isDateOlderThanXDays } = require('../../utils/time');
+const logger = require('../../utils/logger');
 const mongoose = require('mongoose');
 
 module.exports = {
@@ -16,9 +16,6 @@ module.exports = {
     //            and wars go from monday to sunday 5:34am
     schedule: '0 0 12 * * 1', // = 12:00:00pm on Monday
     async execute(client) {
-
-        // TODO: all of the database tables for this should be unique for each guild
-        //       the issue is that players in all guilds are competing in the same role shuffle
         
         const primaryChannels = await PrimaryChannels.find({});
         primaryChannels.forEach( async (channelProfile) => {
@@ -28,14 +25,14 @@ module.exports = {
 
             const clanProfile = await Clan.findOne({ guildId: guildId });
             if (!clanProfile) {
-                console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Warning] Event weekly-role-shuffle: Default clan tag not set for guild ${guildId} but job is still enabled!`));
+                logger.warn(`Event ${this.name}: Default clan tag not set for guild ${guildId} but job is still enabled!`);
                 return;
             }
 
             // get the most recent clan war summary
             const clanWarWeekProfile = await ClanWarWeek.findOne({ clanTag: clanProfile.clanTag }, null, { sort: { date: -1 } });
             if (!clanWarWeekProfile) {
-                console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Warning] Event weekly-role-shuffle: There is no recorded Clan War Table for clan ${clanProfile.clanTag}!`));
+                logger.warn(`Event ${this.name}: There is no recorded Clan War Table for clan ${clanProfile.clanTag}!`);
                 return;
             }
 
@@ -59,7 +56,7 @@ module.exports = {
 
             // there must be more than 1 person participating
             if (roleShuffleParticipants.length <= 1) {
-                console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Info] Event weekly-role-shuffle: Not enough role shuffle participants in clan ${clanProfile.clanTag}!`));
+                logger.info(`Event ${this.name}: Not enough role shuffle participants in clan ${clanProfile.clanTag}!`);
                 return;
             }
 
@@ -122,7 +119,7 @@ module.exports = {
                     }
 
                     if (isDateOlderThanXDays(shuffleDate, 8)) {
-                        console.error(`${getCurrentTimeString()}   ` + chalk.yellow(`[Warning] Event weekly-role-shuffle: Role shuffle profile for player ${participant.playerTag} in clan ${clanProfile.clanTag} is too old! Assuming they did not win last week.`));
+                        logger.warn(`Event ${this.name}: Role shuffle profile for player ${participant.playerTag} in clan ${clanProfile.clanTag} is too old! Assuming they did not win last week.`);
                         highestFame = false;
                     }
 

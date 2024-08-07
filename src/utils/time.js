@@ -89,6 +89,7 @@ function isDateNewerThanXDays(date, days) {
     return date > daysAgo;
 }
 
+
 module.exports = {
     getFormattedTimeStringWithSeconds,
     getFormattedTimeString,

@@ -1,5 +1,6 @@
 const Challenge = require('../../schemas/challenge');
 const { isDateOlderThanXHours, isDateOlderThanXDays } = require('../../utils/time');
+const logger = require('../../utils/logger');
 
 module.exports = {
     name: 'clean-challenges',
@@ -8,7 +9,6 @@ module.exports = {
     // runs at midnight every night
     schedule: '0 0 * * *',
     async execute(client) {
-        console.log('executing clean-challenges job');
 
         // Retrieve all entries in the database
         const ChallengesArray = await Challenge.find({});
@@ -46,5 +46,7 @@ module.exports = {
                     break;
             }
         });
+
+        logger.running(`Job ${this.name}: Cleaning challenges in progress`);
     },
 };

@@ -1,9 +1,9 @@
-const chalk = require('chalk');
 const ClanWarDay = require('../../schemas/clanWarDay');
 const PlayerWarDay = require('../../schemas/playerWarDay');
 const Clan = require('../../schemas/clanTag');
 const { getCurrentRiverRace, getClan } = require('../../services/clashRoyaleAPI');
-const { getCurrentTimeString, isDateNewerThanXHours } = require('../../utils/time');
+const { isDateNewerThanXHours } = require('../../utils/time');
+const logger = require('../../utils/logger');
 const mongoose = require('mongoose');
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
         const clanGuildProfiles = await Clan.find({});
         const processedClans = [];
 
-        console.log(`${getCurrentTimeString()}   ` + chalk.green(`[Running] Job ${this.name}: Started collecting war data`));
+        logger.running(`Job ${this.name}: Started collecting war data`);
 
         for (const clanGuild of clanGuildProfiles) {
 
@@ -32,7 +32,7 @@ module.exports = {
             ]).catch(console.error);
 
             if (!war) {
-                console.error(`${getCurrentTimeString()}   ` + chalk.red(`[Error] Job collect-war-data-daily: Nothing retrieved from API for clan ${clanTag}`));
+                logger.error(`Job ${this.name}: Nothing retrieved from API for clan ${clanTag}`);
                 return;
             }
 
@@ -45,7 +45,7 @@ module.exports = {
                 // some information about the player comes from a different API call
                 const clanMember = clan.memberList.find( (clanMember) => clanMember.tag === member.tag );
                 if (!clanMember) {
-                    console.error(`${getCurrentTimeString()}   ` + chalk.red(`[Error] Job collect-war-data-daily: Found clan member tag \`#${member.tag}\` in the river race data but not in the api data for clan \`#${clanTag}\``));
+                    logger.error(`Job ${this.name}: Found clan member tag \`#${member.tag}\` in the river race data but not in the api data for clan \`#${clanTag}\``);
                     continue;
                 }
 

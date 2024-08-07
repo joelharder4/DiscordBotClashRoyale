@@ -1,9 +1,8 @@
-const chalk = require('chalk');
 const ClanWarWeek = require('../../schemas/clanWarWeek');
 const PlayerWarWeek = require('../../schemas/playerWarWeek');
 const Clan = require('../../schemas/clanTag');
 const { getCurrentRiverRace, getClan } = require('../../services/clashRoyaleAPI');
-const { getCurrentTimeString } = require('../../utils/time');
+const logger = require('../../utils/logger');
 const mongoose = require('mongoose');
 
 module.exports = {
@@ -25,7 +24,7 @@ module.exports = {
             ]).catch(console.error);
 
             if (!war || !clan) {
-                console.error(`${getCurrentTimeString()}   ` + chalk.red(`[Error] Job collect-war-data-weekly: Nothing retrieved from API for clan ${clanTag}`));
+                logger.error(`Job ${this.name}: Nothing retrieved from API for clan ${clanTag}`);
                 return;
             }
 
@@ -37,7 +36,7 @@ module.exports = {
                 // some information about the player comes from a different API call
                 const clanMember = clan.memberList.find( (clanMember) => clanMember.tag === member.tag );
                 if (!clanMember) {
-                    console.error(`${getCurrentTimeString()}   ` + chalk.red(`[Error] Job collect-war-data-weekly: Found clan member tag \`#${member.tag}\` in the river race data but not in the clan data for clan \`#${clanTag}\``));
+                    logger.error(`Job ${this.name}: Found clan member tag \`#${member.tag}\` in the river race data but not in the clan data for clan \`#${clanTag}\``);
                     continue;
                 }
 
@@ -68,6 +67,6 @@ module.exports = {
 
         });
 
-        console.log(`${getCurrentTimeString()}   ` + chalk.green(`[Running] Job collect-war-data-weekly: job began collecting war data for all guilds`));
+        logger.running(`Job ${this.name}: job began collecting war data for all guilds`);
     }
 }

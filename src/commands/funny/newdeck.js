@@ -1,9 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
-const chalk = require('chalk');
 const { deckTable } = require('../../utils/clashRoyaleTables');
 const { deckGeneratorPrompt } = require('../../utils/chatGPTPrompts');
 const { completionWithSystemPrompt } = require('../../services/chatgpt');
-
+const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -28,10 +27,10 @@ module.exports = {
             deck = JSON.parse(gptResponse.choices[0].message.content);
 
         } catch(err) {
-            console.log(chalk.red(`[Error]: Failed to convert GPT Generated deck into JSON format.\n`), err);
+            logger.error(`Command ${this.data.name}: Failed to convert GPT Generated deck into JSON format.`);
 
             await interaction.editReply({
-                content: `Sorry, something went wrong but it's not your fault. Please try again!`,
+                content: `Sorry, something went wrong because ChatGPT had a skill issue. Please try again!`,
             });
             return;
         }

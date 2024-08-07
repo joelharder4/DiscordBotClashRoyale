@@ -1,4 +1,5 @@
 const { readdirSync } = require('fs');
+const logger = require('../../utils/logger');
 
 module.exports = (client) => {
     client.handleComponents = async () => {
@@ -33,7 +34,7 @@ module.exports = (client) => {
                     break;
 
                 default:
-                    console.log('Unknown Component Folder: ', folder);
+                    logger.log(`Unknown Component Folder ${folder}`);
                     break;
             }
         }

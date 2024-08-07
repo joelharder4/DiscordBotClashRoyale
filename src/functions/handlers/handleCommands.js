@@ -1,6 +1,7 @@
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
+const logger = require("../../utils/logger");
 
 module.exports = (client) => {
     client.handleCommands = async () => {
@@ -18,10 +19,8 @@ module.exports = (client) => {
 
                 if (folder === 'test' || client.testMode) {
                     testCommandArray.push(command.data.toJSON());
-                    // console.log(`Test command loaded: ${command.data.name}`);
                 } else {
                     commandArray.push(command.data.toJSON());
-                    // console.log(`Command loaded: ${command.data.name}`);
                 }
             }
         }
@@ -31,7 +30,7 @@ module.exports = (client) => {
 
         const rest = new REST({ version: '9' }).setToken(process.env.token);
         try {
-            console.log('Started refreshing application (/) commands.');
+            logger.log('Started refreshing application (/) commands.');
 
             // clear any existing guild commands
             await rest.put(
@@ -44,7 +43,7 @@ module.exports = (client) => {
                 { body: client.commandArray, }
             );
 
-            console.log('Successfully reloaded application (/) commands.');
+            logger.log('Successfully reloaded application (/) commands.');
         } catch (error) {
             console.error(error);
         }
