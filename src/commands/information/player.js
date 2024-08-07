@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, heading, bold } = require('discord.js');
 const { getPlayer } = require('../../services/clashRoyaleAPI');
 const { cardLevelTable } = require('../../utils/clashRoyaleTables');
+const { totalsCommonCardsAtXLevel } = require('../../utils/miscellaneousUtils');
 const PlayerTag = require('../../schemas/playerTag');
 
 module.exports = {
@@ -38,6 +39,7 @@ module.exports = {
         }
 
         const cardLevels = await cardLevelTable(player.cards);
+        totalsCommonCardsAtXLevel();
 
         const leagueNames = {
             1: "Challenger I",
