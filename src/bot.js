@@ -6,7 +6,8 @@ const { Client, Collection } = require("discord.js");
 const fs = require("fs");
 
 // const { Guilds, GuildMessages, GuildMessageReactions } = GatewayIntentBits
-const client = new Client({ intents: 32767 });
+// intent bits calculator: https://discord-intents-calculator.vercel.app/
+const client = new Client({ intents: 16811967 });
 client.commands = new Collection();
 client.buttons = new Collection();
 client.selectMenus = new Collection();
