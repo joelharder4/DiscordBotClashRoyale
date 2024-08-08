@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, heading, bold } = require('discord.js');
 const { getPlayer } = require('../../services/clashRoyaleAPI');
-const { cardLevelTable } = require('../../utils/clashRoyaleTables');
-const { totalsCommonCardsAtXLevel } = require('../../utils/miscellaneousUtils');
+const { cardLevelTable, cardTotalCountTable } = require('../../utils/clashRoyaleTables');
+const { playerTotalCardCount } = require('../../utils/miscellaneousUtils');
 const PlayerTag = require('../../schemas/playerTag');
 
 module.exports = {
@@ -39,7 +39,8 @@ module.exports = {
         }
 
         const cardLevels = await cardLevelTable(player.cards);
-        totalsCommonCardsAtXLevel();
+        const totalCardCounts = playerTotalCardCount(player.cards);
+        const totalCardCountTable = await cardTotalCountTable(totalCardCounts);
 
         const leagueNames = {
             1: "Challenger I",
@@ -77,8 +78,10 @@ module.exports = {
         message += ` Trophies: **${player.progress['goblin-road'].trophies}**\n`;
         message += ` Best Trophies: **${player.progress['goblin-road'].bestTrophies}**\n`;
 
-        message += `\n**Card Levels**\n`;
+        message += `\n**Total Cards Collected**\n`;
+        message += `\`\`\`${totalCardCountTable}\`\`\``;
 
+        message += `\n**Card Level Distribution**\n`;
         message += `\`\`\`${cardLevels}\`\`\``;
 
         await interaction.reply({

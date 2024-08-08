@@ -143,6 +143,24 @@ const cardLevelTable = async (playerCards) => {
 }
 
 
+const cardTotalCountTable = async (cardCounts) => {
+    const dataTable = [
+        ['Rarity', 'Total'],
+    ];
+
+    for (const rarity in cardCounts) {
+        dataTable.push([rarity, cardCounts[rarity].toString()]);
+    }
+
+    const config = {
+        drawHorizontalLine: (lineIndex, rowCount) => {
+            return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
+        },
+    };
+
+    return table(dataTable, config);
+}
+
 
 
 // deck should be an array of 8 card objects
@@ -199,5 +217,6 @@ module.exports = {
     clanMembersTable,
     clanWarDayTable,
     cardLevelTable,
+    cardTotalCountTable,
     deckTable,
 }
