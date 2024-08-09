@@ -14,7 +14,7 @@ client.selectMenus = new Collection();
 client.modals = new Collection();
 client.commandArray = [];
 client.testCommandArray = [];
-client.testMode = true; // change to false when deploying
+client.testMode = false; // change to false when deploying
 client.testGuildId =  "1025906566232285224";
 
 const functionsFolder = fs.readdirSync("./src/functions");

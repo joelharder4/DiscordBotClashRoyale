@@ -161,14 +161,17 @@ const playerTotalCardCount = (playerCards) => {
         epic: 0,
         legendary: 0,
         champion: 0,
+        total: 0,
     };
 
     for (const card of playerCards) {
         const rarity = card.rarity.toLowerCase();
         // correct because card.level starts at 1 no matter the rarity
         const level = correctCardLevel(card.level, rarity);
+        const numCards = totalCardsAtXLevel(level, rarity) + card.count;
 
-        cardCounts[rarity] += totalCardsAtXLevel(level, rarity) + card.count;
+        cardCounts[rarity] += numCards;
+        cardCounts["total"] += numCards;
     }
 
     return cardCounts;

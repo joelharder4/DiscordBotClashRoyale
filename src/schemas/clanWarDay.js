@@ -9,7 +9,7 @@ const clanWarDaySchema = new Schema({
     fameToday: {type: Number, required: true},
     periodType: {
         type: String,
-        enum: ["training", "war_day", "colosseum"],
+        enum: ["training", "warday", "colosseum"],
         required: true
     },
     participants: {

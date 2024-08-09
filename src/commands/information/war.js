@@ -38,7 +38,7 @@ module.exports = {
 
         if (periodType.toLowerCase() == "training") {
             dayType = "Training Day";
-        } else if (periodType.toLowerCase() == "war_day") {
+        } else if (periodType.toLowerCase() == "warday") {
             dayType = "Battle Day";
         } else if (periodType.toLowerCase() == "colosseum") {
             dayType = "Colosseum";
