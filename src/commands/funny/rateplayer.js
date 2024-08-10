@@ -3,7 +3,7 @@ const { getPlayer } = require('../../services/clashRoyaleAPI');
 const PlayerTag = require('../../schemas/playerTag');
 const { completionWithSystemPrompt } = require('../../services/chatgpt');
 const { harshPlayerCriticPrompt } = require('../../utils/chatGPTPrompts');
-
+const { sendLongMessage } = require('../../utils/longMessage');
 
 
 module.exports = {
@@ -78,26 +78,16 @@ module.exports = {
         message += `Goblin Queen's Journey:\n`;
         message += ` Trophies: ${player.progress['goblin-road'].trophies}\n`;
         message += ` Best Trophies: ${player.progress['goblin-road'].bestTrophies}\n`;
+        
+        // 1 in 10 chance of being bald
+        if (Math.floor(Math.random() * 10) === 0) {
+            message += `\nUnfortunetly despite all of the statistics shown above, this player is bald which means they have special bald powers and that makes them really cool. It also means that they love Family. You aren't happy about it, but you have to give them credit for this one thing.\n`;
+        }
 
         const gptResponse = await completionWithSystemPrompt(message, harshPlayerCriticPrompt);
         const gptMessage = gptResponse.choices[0].message.content;
 
-        // max length of a discord message is 2000 characters
-        if (gptMessage.length > 1940) {
-            const firstPart = gptMessage.slice(0, 1990);
-            const remainingPart = gptMessage.slice(1990);
-            
-            // delete the "Bot is thinking..." message
-            await interaction.deleteReply();
-            await interaction.channel.send(firstPart + "...").catch(console.error);
-            await interaction.channel.send(remainingPart).catch(console.error);
-            
-        } else {
-
-            await interaction.editReply({
-                content: `## Official rating of ${player.name} (${player.tag})\n` + gptMessage,
-            });
-            
-        }
+        await interaction.deleteReply();
+        await sendLongMessage(interaction.channel, `## Official rating of ${player.name} (${player.tag})\n` + gptMessage);
     },
 };

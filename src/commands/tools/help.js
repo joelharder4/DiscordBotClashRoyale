@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const longMessage = require('../../utils/longMessage');
+const { sendLongMessage } = require('../../utils/longMessage');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -30,6 +30,6 @@ module.exports = {
         message += `4. For a Co-Leader to become Leader, they have to get the most medals for two consecutive weeks and they must be the sole winner for the second one (if it is a tir for the second one, it doesn't count).\n`;
         message += `5. If somehow all players are tied, nothing happens\n`;
 
-        await longMessage.sendLongMessage(message, interaction.channel);
+        await sendLongMessage(interaction.channel, message);
     },
 };
