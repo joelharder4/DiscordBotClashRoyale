@@ -1,7 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { deckTable } = require('../../utils/clashRoyaleTables');
 const { deckGeneratorPrompt } = require('../../utils/chatGPTPrompts');
-const { completionWithSystemPrompt } = require('../../services/chatgpt');
+const { deckGeneratorSchema } = require('../../utils/chatGPTSchemas');
+const { completionWithStructuredOutput } = require('../../services/chatgpt');
 const logger = require('../../utils/logger');
 
 module.exports = {
@@ -20,20 +21,8 @@ module.exports = {
 
         await interaction.deferReply();
 
-        const gptResponse = await completionWithSystemPrompt(theme, deckGeneratorPrompt);
-        let deck = {};
-
-        try {
-            deck = JSON.parse(gptResponse.choices[0].message.content);
-
-        } catch(err) {
-            logger.error(`Command ${this.data.name}: Failed to convert GPT Generated deck into JSON format.`);
-
-            await interaction.editReply({
-                content: `Sorry, something went wrong because ChatGPT had a skill issue. Please try again!`,
-            });
-            return;
-        }
+        const gptResponse = await completionWithStructuredOutput(theme, deckGeneratorPrompt, deckGeneratorSchema);
+        let deck = gptResponse.choices[0].message.parsed;
 
         let totalElixir = 0;
         deck.cards.forEach(card => totalElixir += card.cost);

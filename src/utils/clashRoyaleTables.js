@@ -174,7 +174,7 @@ const deckTable = async (deck) => {
         const card = deck[i];
         const name = card.name ?? "Joe Biden";
         const rarity = card.rarity ?? "Joever";
-        let elixir = card.cost.toString() ?? "11";
+        let elixir = card.cost.toString() ?? "0";
         elixir += " Elixir";
 
         let info = `${name}\n(${rarity})\n${elixir}`;

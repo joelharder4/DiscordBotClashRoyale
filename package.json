@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/bot.js",
   "scripts": {
-    "test": "node ."
+    "start": "node ."
   },
   "keywords": [],
   "author": "Joel Harder",
@@ -21,6 +21,7 @@
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.1",
     "node-schedule": "^2.1.1",
+    "openai": "^4.55.4",
     "table": "^6.8.2",
     "types": "^0.1.1"
   }

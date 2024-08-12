@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { clashRoyaleToken } = process.env;
+const logger = require('../utils/logger');
 
 const getRequest = async (endpoint) => {
     const response = await axios.get("https://api.clashroyale.com/v1" + endpoint, {
@@ -18,6 +19,8 @@ const getRiverRaceLog = async (clanTag) => {
     if (riverRaceLog.status === 200) {
         return riverRaceLog.data;
     }
+
+    logger.error(`getRiverRaceLog: response status ${riverRaceLog.status}`);
     return undefined;
 };
 
@@ -27,6 +30,8 @@ const getCurrentRiverRace = async (clanTag) => {
     if (riverRace.status === 200) {
         return riverRace.data;
     }
+
+    logger.error(`getCurrentRiverRace: response status ${riverRace.status}`);
     return undefined;
 };
 
@@ -36,6 +41,8 @@ const getPlayer = async (playerTag) => {
     if (player.status === 200) {
         return player.data;
     }
+
+    logger.error(`getPlayer: response status ${player.status}`);
     return undefined;
 };
 
@@ -45,6 +52,8 @@ const getClan = async (clanTag) => {
     if (clan.status === 200) {
         return clan.data;
     }
+
+    logger.error(`getClan: response status ${clan.status}`);
     return undefined;
 };
 
