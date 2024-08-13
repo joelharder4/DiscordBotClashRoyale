@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { openAIKey } = process.env;
 const logger = require('../utils/logger');
 const { OpenAI } = require("openai");
@@ -9,37 +8,37 @@ const client = new OpenAI({
 
 
 const completionWithoutSystemPrompt = async (message) => {
-    const response = await axios.post("https://api.openai.com/v1/chat/completions", {
-        model: "gpt-4o-mini",
-        messages: [{"role": "user", "content": message}],
-        temperature: 1.0
-    }, {
-        headers: {
-            Authorization: `Bearer ${openAIKey}`,
-            'Content-Type': 'application/json'
-        }
-    });
+    try {
+        const chatCompletion = await client.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "user", content: message },
+            ],
+            temperature: 1.0,
+        });
 
-    return response.data;
+        return chatCompletion;
+    } catch(err) {
+        logger.error(`completionWithStructuredOutput: ${err}`);
+    }
 }
 
 
-const completionWithSystemPrompt = async (userMessage, systemPrompt) => {
-    const response = await axios.post("https://api.openai.com/v1/chat/completions", {
-        model: "gpt-4o-mini",
-        messages: [
-            {"role": "system", "content": systemPrompt},
-            {"role": "user", "content": userMessage}
-        ],
-        temperature: 1.0
-    }, {
-        headers: {
-            Authorization: `Bearer ${openAIKey}`,
-            'Content-Type': 'application/json'
-        }
-    });
+const completionWithSystemPrompt = async (userMessage, systemMessage) => {
+    try {
+        const chatCompletion = await client.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "system", content: systemMessage },
+                { role: "user", content: userMessage },
+            ],
+            temperature: 1.0,
+        });
 
-    return response.data;
+        return chatCompletion;
+    } catch(err) {
+        logger.error(`completionWithStructuredOutput: ${err}`);
+    }
 }
 
 
@@ -59,7 +58,6 @@ const completionWithStructuredOutput = async (userMessage, systemMessage, schema
             },
         });
 
-        console.log(chatCompletion.choices[0].message);
         return chatCompletion;
     } catch(err) {
         logger.error(`completionWithStructuredOutput: ${err}`);

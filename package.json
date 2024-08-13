@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/bot.js",
   "scripts": {
-    "start": "node ."
+    "start": "node --no-deprecation .",
+    "test": "node ."
   },
   "keywords": [],
   "author": "Joel Harder",
@@ -12,7 +13,7 @@
   "dependencies": {
     "@discordjs/rest": "^2.3.0",
     "api": "^6.1.2",
-    "axios": "^1.7.2",
+    "axios": "^1.3.1",
     "chalk": "^4.1.2",
     "discord": "^0.8.2",
     "discord.js": "^14.15.3",

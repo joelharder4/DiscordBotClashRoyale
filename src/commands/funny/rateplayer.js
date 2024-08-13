@@ -64,7 +64,7 @@ module.exports = {
         message += `Best Trophies: ${player.bestTrophies}\n`;
         message += `Legacy Best Trophies (from the old system): ${player.legacyTrophyRoadHighScore}\n`;
         message += `Battles Played: ${player.battleCount}\n`;
-        message += `Battles Won: ${player.wins}\n`;
+        message += `Non 3-Crown Wins: ${player.wins}\n`;
         message += `3-Crown Wins: ${player.threeCrownWins}\n`;
         message += `Losses: ${player.losses}\n`;
         message += `Cards Found: ${player.cards.length} of 115 {${100 * Math.round(player.cards.length / 115)}%}\n`;
@@ -85,6 +85,12 @@ module.exports = {
         }
 
         const gptResponse = await completionWithSystemPrompt(message, harshPlayerCriticPrompt);
+        if (!gptResponse) {
+            await interaction.editReply({
+                content: `I'm sorry, I couldn't get a response from ChatGPT. Please try again later.`,
+            });
+            return;
+        }
         const gptMessage = gptResponse.choices[0].message.content;
 
         await interaction.deleteReply();
