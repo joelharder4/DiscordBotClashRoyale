@@ -32,7 +32,6 @@ module.exports = (client) => {
         try {
             logger.log('Started refreshing application (/) commands.');
 
-            // clear any existing guild commands
             await rest.put(
                 Routes.applicationGuildCommands(clientId, guildId),
                 { body: client.testCommandArray, }

@@ -21,7 +21,7 @@ module.exports = {
         if (!userProfile) {
             await interaction.reply({
                 content: `You need to set your player tag before you can challenge other users!\nUse \`/setplayertag\` to set your player tag.`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }
@@ -30,7 +30,7 @@ module.exports = {
         if (targetUser.id === interaction.user.id) {
             await interaction.reply({
                 content: `You can't challenge yourself!`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }
@@ -45,7 +45,7 @@ module.exports = {
             if (challengeProfile.status === "pending" || challengeProfile.status === "ongoing") {
                 await interaction.reply({
                     content: `You already have a challenge with <@${targetUser.id}> that is ${challengeProfile.status}!`,
-                    ephemeral: true,
+                    flags: [MessageFlags.Ephemeral],
                 });
                 return;
             }
@@ -59,7 +59,7 @@ module.exports = {
 
                 await interaction.reply({
                     content: `Please wait ${secondsLeft.toString()} seconds until you challenge <@${targetUser.id}> again!`,
-                    ephemeral: true,
+                    flags: [MessageFlags.Ephemeral],
                 });
                 return;
             }

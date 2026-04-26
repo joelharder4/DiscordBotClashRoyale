@@ -17,7 +17,7 @@ module.exports = {
         if (clickerId !== challengedId) {
             await interaction.reply({
                 content: `You silly goose! You aren't the one who was challenged!`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }
@@ -27,7 +27,7 @@ module.exports = {
         if (!challengedProfile) {
             await interaction.reply({
                 content: `You need to set your player tag before you can accept challenges!\nUse \`/setplayertag\` to set your player tag.`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
         }
 

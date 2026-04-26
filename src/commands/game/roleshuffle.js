@@ -16,7 +16,7 @@ module.exports = {
         if (!primaryChannelProfile) {
             await interaction.reply({
                 content: `You need to assign me a channel for this server before you can use this feature!\nUse \`/setchannel\` to set the channel.`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }
@@ -26,7 +26,7 @@ module.exports = {
         if (!userPlayerProfile) {
             await interaction.reply({
                 content: `You need to set your player tag before you can participate in the role shuffle!\nUse \`/setplayertag\` to set your player tag.`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }

@@ -17,7 +17,7 @@ module.exports = {
         if (!primaryChannelProfile) {
             await interaction.reply({
                 content: `You need to assign me a channel before you can use automated messages!\nUse \`/setchannel\` to set the channel.`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }
@@ -27,7 +27,7 @@ module.exports = {
         if (!guildClanProfile) {
             await interaction.reply({
                 content: `You need to set a default clan tag for this server using \`/setserverclan\` so that I know which clan to check!`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }

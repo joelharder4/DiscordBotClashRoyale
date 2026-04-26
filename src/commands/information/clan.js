@@ -20,7 +20,7 @@ module.exports = {
         if (!guildClanProfile && !clanTagOption) {
             await interaction.reply({
                 content: `You must either provide a clan tag in the command, or set a default clan tag for this server using \`/setserverclan\`!`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }

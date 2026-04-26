@@ -23,7 +23,7 @@ module.exports = {
         if (!userPlayerProfile && !playerTagOption) {
             await interaction.reply({
                 content: `You must either provide a player tag in the command, or set a default player tag for yourself using \`/setplayertag\`!`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }

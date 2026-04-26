@@ -10,7 +10,7 @@ const client = new OpenAI({
 const completionWithoutSystemPrompt = async (message) => {
     try {
         const chatCompletion = await client.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-nano",
             messages: [
                 { role: "user", content: message },
             ],
@@ -27,7 +27,7 @@ const completionWithoutSystemPrompt = async (message) => {
 const completionWithSystemPrompt = async (userMessage, systemMessage) => {
     try {
         const chatCompletion = await client.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-nano",
             messages: [
                 { role: "system", content: systemMessage },
                 { role: "user", content: userMessage },
@@ -47,7 +47,7 @@ const completionWithSystemPrompt = async (userMessage, systemMessage) => {
 const completionWithStructuredOutput = async (userMessage, systemMessage, schema) => {
     try {
         const chatCompletion = await client.beta.chat.completions.parse({
-            model: "gpt-4o-mini",
+            model: "gpt-5-nano",
             messages: [
                 { role: "system", content: systemMessage },
                 { role: "user", content: userMessage },

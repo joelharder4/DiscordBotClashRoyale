@@ -16,7 +16,7 @@ module.exports = {
         if (clickerId !== challengedId) {
             await interaction.reply({
                 content: `You silly goose! You aren't the one who was challenged!`,
-                ephemeral: true,
+                flags: [MessageFlags.Ephemeral],
             });
             return;
         }
