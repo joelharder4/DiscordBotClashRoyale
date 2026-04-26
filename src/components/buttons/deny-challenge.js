@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const Challenge = require('../../schemas/challenge');
 
 module.exports = {

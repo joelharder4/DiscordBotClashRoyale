@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const EnabledJobs = require('../../schemas/enabledJobs');
 const PrimaryChannels = require('../../schemas/primaryChannels');
 const Clan = require('../../schemas/clanTag');

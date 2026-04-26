@@ -13,7 +13,6 @@ module.exports = {
             return;
         }
 
-
         if (content.includes("heheheha")) {
             const heheheha = client.emojis.cache.find(
                 (emoji) => emoji.id = '1269055380915359877'
@@ -42,7 +41,7 @@ module.exports = {
             message.react(yippee).catch(console.error);
         }
         
-        if (content.includes("among us") || content.includes("amogus")) {
+        if (content.includes("among us") || content.includes("amogus") || content.includes("sus") || content.includes("abung")) {
             const amogus = client.emojis.cache.find(
                 (emoji) => emoji.id = '1270835641361367112'
             );
@@ -54,6 +53,13 @@ module.exports = {
                 (emoji) => emoji.id = '1270927615657513021'
             );
             message.react(nuhuh).catch(console.error);
+        }
+
+        if (content.includes("aga")) {
+            const aga = client.emojis.cache.find(
+                (emoji) => emoji.id = '1498043977398616104'
+            );
+            message.react(aga).catch(console.error);
         }
     }
 }

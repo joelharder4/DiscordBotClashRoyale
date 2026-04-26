@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { getPlayer } = require('../../services/clashRoyaleAPI');
 const PlayerTag = require('../../schemas/playerTag');
 const { completionWithSystemPrompt } = require('../../services/chatgpt');

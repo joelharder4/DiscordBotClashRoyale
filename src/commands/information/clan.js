@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, heading, bold } = require('discord.js');
+const { SlashCommandBuilder, heading, bold, MessageFlags } = require('discord.js');
 const { getClan } = require('../../services/clashRoyaleAPI');
 const { clanMembersTable } = require('../../utils/clashRoyaleTables');
 const Clan = require('../../schemas/clanTag');

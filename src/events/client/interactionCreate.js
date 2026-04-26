@@ -1,4 +1,4 @@
-const { InteractionType } = require('discord.js');
+const { InteractionType, MessageFlags } = require('discord.js');
 
 module.exports = {
     name: 'interactionCreate',
@@ -13,8 +13,16 @@ module.exports = {
             try {
                 await command.execute(interaction, client);
             } catch (error) {
-                console.error(error);
-                await interaction.reply({ content: 'There was an error while executing this command!', flags: [MessageFlags.Ephemeral] });
+                const errorMessage = { 
+                    content: 'There was an error while executing this command!', 
+                    flags: [MessageFlags.Ephemeral],
+                };
+
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp(errorMessage).catch(err => console.error('Failed to send followUp:', err));
+                } else {
+                    await interaction.reply(errorMessage).catch(err => console.error('Failed to send reply:', err));
+                }
             }
 
         } else if (interaction.isButton()) {
